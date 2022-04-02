@@ -14,7 +14,7 @@ include_directories(.)
 
 add_executable(
     balancer
-    main.cpp
+    main.cpp RequestHandler.cpp TransactionHandler.cpp
 )
 
 target_link_libraries(balancer PUBLIC
