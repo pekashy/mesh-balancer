@@ -21,7 +21,7 @@ void RequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) n
 	LOG(INFO) << "Redirecting to " << redirectionURL;
 
 	proxygen::ResponseBuilder(downstream_)
-			.status(307, "Balanced")
+			.status(302, "Balanced")
 			.header<std::string>("Location", redirectionURL)
 			.sendWithEOM();
 }
