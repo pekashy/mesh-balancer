@@ -1,7 +1,7 @@
 #include <Server/TransactionHandler.h>
 #include <Server/RequestHandler.h>
 
-namespace Server {
+namespace server {
 
 TransactionHandler::TransactionHandler(RequestHandler &parent) : parent(parent) {
 }

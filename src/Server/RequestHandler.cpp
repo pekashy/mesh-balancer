@@ -4,10 +4,12 @@
 #include <Server/RequestHandler.h>
 #include <proxygen/lib/utils/URL.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
+#include <glog/logging.h>
 
-namespace Server {
-RequestHandler::RequestHandler(folly::HHWheelTimer *timer)
-		: serverHandler(*this) {
+namespace server {
+RequestHandler::RequestHandler(folly::HHWheelTimer *timer, balancer::Redirector &redir)
+		: serverHandler(*this), redirector(redir) {
+	LOG(INFO) << "Created request handler";
 }
 
 void RequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) noexcept {
@@ -15,10 +17,12 @@ void RequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) n
 	proxygen::URL url(request->getURL());
 
 	folly::SocketAddress addr;
-	LOG(INFO) << "Redirecting to 0.0.0.0:8001";
+	std::string redirectionURL = redirector.GetNextRedirectURL();
+	LOG(INFO) << "Redirecting to " << redirectionURL;
+
 	proxygen::ResponseBuilder(downstream_)
 			.status(307, "Balanced")
-			.header<std::string>("Location", "http://0.0.0.0:30000/bench")
+			.header<std::string>("Location", redirectionURL)
 			.sendWithEOM();
 }
 void RequestHandler::onBody(std::unique_ptr<folly::IOBuf> body) noexcept {
@@ -49,8 +53,12 @@ void RequestHandlerFactory::onServerStop() noexcept {
 
 }
 
+RequestHandlerFactory::RequestHandlerFactory(balancer::Redirector &redir)
+		: redirector(redir) {
+}
+
 proxygen::RequestHandler *RequestHandlerFactory::onRequest(proxygen::RequestHandler *handler,
 																													 proxygen::HTTPMessage *message) noexcept {
-	return new RequestHandler(timer->timer.get());
+	return new RequestHandler(timer->timer.get(), redirector);
 }
 }

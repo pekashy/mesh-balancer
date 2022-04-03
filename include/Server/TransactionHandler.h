@@ -1,7 +1,7 @@
 #pragma once
 #include <proxygen/lib/http/session/HTTPTransaction.h>
 
-namespace Server {
+namespace server {
 class RequestHandler;
 
 class TransactionHandler : public proxygen::HTTPTransactionHandler {
