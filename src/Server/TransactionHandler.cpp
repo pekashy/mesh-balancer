@@ -1,9 +1,9 @@
-#include "TransactionHandler.h"
-#include "RequestHandler.h"
+#include <Server/TransactionHandler.h>
+#include <Server/RequestHandler.h>
 
 namespace Server {
 
-TransactionHandler::TransactionHandler(RequestHandler& parent): parent(parent) {
+TransactionHandler::TransactionHandler(RequestHandler &parent) : parent(parent) {
 }
 
 void TransactionHandler::setTransaction(proxygen::HTTPTransaction *txn) noexcept {

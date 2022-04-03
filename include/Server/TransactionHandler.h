@@ -6,7 +6,7 @@ class RequestHandler;
 
 class TransactionHandler : public proxygen::HTTPTransactionHandler {
  public:
-	explicit TransactionHandler(RequestHandler& parent);
+	explicit TransactionHandler(RequestHandler &parent);
 	void setTransaction(proxygen::HTTPTransaction *txn) noexcept override;
 	void detachTransaction() noexcept override;
 	void onHeadersComplete(std::unique_ptr<proxygen::HTTPMessage> msg) noexcept override;
@@ -18,6 +18,6 @@ class TransactionHandler : public proxygen::HTTPTransactionHandler {
 	void onEgressPaused() noexcept override;
 	void onEgressResumed() noexcept override;
  private:
-	RequestHandler& parent;
+	RequestHandler &parent;
 };
 }

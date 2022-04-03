@@ -1,13 +1,12 @@
 
 #include <memory>
 #include <proxygen/lib/http/HTTPConstants.h>
-#include "RequestHandler.h"
+#include <Server/RequestHandler.h>
 #include <proxygen/lib/utils/URL.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
 
-
 namespace Server {
-RequestHandler::RequestHandler(folly::HHWheelTimer* timer)
+RequestHandler::RequestHandler(folly::HHWheelTimer *timer)
 		: serverHandler(*this) {
 }
 
@@ -50,7 +49,7 @@ void RequestHandlerFactory::onServerStop() noexcept {
 
 }
 
-proxygen::RequestHandler* RequestHandlerFactory::onRequest(proxygen::RequestHandler *handler,
+proxygen::RequestHandler *RequestHandlerFactory::onRequest(proxygen::RequestHandler *handler,
 																													 proxygen::HTTPMessage *message) noexcept {
 	return new RequestHandler(timer->timer.get());
 }
