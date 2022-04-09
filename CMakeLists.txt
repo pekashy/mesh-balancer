@@ -14,6 +14,7 @@ set(MAIN_SOURCE main.cpp)
 file(MAKE_DIRECTORY cmake-build-debug)
 find_package(proxygen REQUIRED)
 find_package(gflags REQUIRED)
+find_package(spdlog REQUIRED)
 
 include_directories(include)
 add_subdirectory(src)
@@ -22,12 +23,17 @@ add_executable(
         balancer_ex
         ${MAIN_SOURCE}
 )
-
-add_dependencies(balancer_ex Server BalancerLogic)
+add_dependencies(BalancerLogic Common spdlog::spdlog)
+add_dependencies(Server Common spdlog::spdlog)
+add_dependencies(balancer_ex Server BalancerLogic Common)
+target_link_libraries(BalancerLogic spdlog::spdlog)
+target_link_libraries(Server spdlog::spdlog)
 
 target_link_libraries(balancer_ex
         Server
         BalancerLogic
+        Common
         proxygen::proxygen
         proxygen::proxygenhttpserver
+        spdlog::spdlog
 )

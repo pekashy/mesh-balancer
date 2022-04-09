@@ -4,19 +4,19 @@
 #include <Server/RequestHandler.h>
 #include <proxygen/lib/utils/URL.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
+#include <Logger.h>
 
 namespace server {
 RequestHandler::RequestHandler(folly::HHWheelTimer *timer, balancer::Redirector &redir)
-		: serverHandler(*this), redirector(redir) {
+		: serverHandler(*this), redirector(redir), logger(LoggerContainer::Get()) {
 }
 
 void RequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) noexcept {
 	request = std::move(headers);
 	proxygen::URL url(request->getURL());
-
 	folly::SocketAddress addr;
 	std::string redirectionURL = redirector.GetNextRedirectURL();
-
+	logger.info(redirectionURL);
 	proxygen::ResponseBuilder(downstream_)
 			.status(302, "Balanced")
 			.header<std::string>("Location", redirectionURL)

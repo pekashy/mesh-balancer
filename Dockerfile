@@ -1,9 +1,9 @@
 FROM pekashy/proxygen-base-image:1.0
 RUN ls
-RUN apt install curl
+RUN apt install -y curl libspdlog-dev
 RUN mkdir -p /code/_build
 COPY . /code
-WORKDIR /code/_build
-RUN cmake .. && make
+RUN cmake /code && make -j
 EXPOSE 11002
+RUN mkdir log
 CMD ./balancer_ex

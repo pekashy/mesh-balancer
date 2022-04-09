@@ -5,6 +5,7 @@
 #include <proxygen/lib/http/HTTPConnector.h>
 #include "TransactionHandler.h"
 #include <Balancer/Redirector.h>
+#include <spdlog/logger.h>
 
 namespace server {
 class RequestHandlerFactory : public proxygen::RequestHandlerFactory {
@@ -33,6 +34,7 @@ class RequestHandler
 	void requestComplete() noexcept override;
 	void onError(proxygen::ProxygenError err) noexcept override;
  private:
+	spdlog::logger& logger;
 	TransactionHandler serverHandler;
 	std::unique_ptr<proxygen::HTTPMessage> request;
 	balancer::Redirector &redirector;
