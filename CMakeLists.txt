@@ -14,7 +14,6 @@ set(MAIN_SOURCE main.cpp)
 file(MAKE_DIRECTORY cmake-build-debug)
 find_package(proxygen REQUIRED)
 find_package(gflags REQUIRED)
-find_package(glog REQUIRED)
 
 include_directories(include)
 add_subdirectory(src)
@@ -31,5 +30,4 @@ target_link_libraries(balancer_ex
         BalancerLogic
         proxygen::proxygen
         proxygen::proxygenhttpserver
-        glog::glog
 )

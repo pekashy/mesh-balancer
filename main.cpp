@@ -6,10 +6,9 @@
 #include <proxygen/httpserver/HTTPServer.h>
 #include <folly/SocketAddress.h>
 #include <Server/RequestHandler.h>
-#include <glog/logging.h>
 
 DEFINE_int32(http_port, 11002, "Port to listen on with HTTP protocol");
-DEFINE_string(ip, "localhost", "IP/Hostname to bind to");
+DEFINE_string(ip, "0.0.0.0", "IP/Hostname to bind to");
 DEFINE_int32(threads,
 						 0,
 						 "Number of threads to listen on. Numbers <= 0 "
@@ -18,12 +17,8 @@ DEFINE_int32(threads,
 int main(int argc, char *argv[]) {
 	using namespace proxygen;
 	using namespace folly;
-
+	std::cout << "Started! " << std::endl;
 	HTTPServerOptions options;
-	FLAGS_logtostderr = true;
-	google::SetLogDestination(google::GLOG_INFO, "log");
-	google::InitGoogleLogging("balancer");
-	LOG(INFO) << "Started!";
 	options.supportsConnect = true;
 	options.threads = static_cast<size_t>(FLAGS_threads);
 	options.shutdownOn = {SIGINT, SIGTERM};

@@ -4,12 +4,10 @@
 #include <Server/RequestHandler.h>
 #include <proxygen/lib/utils/URL.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
-#include <glog/logging.h>
 
 namespace server {
 RequestHandler::RequestHandler(folly::HHWheelTimer *timer, balancer::Redirector &redir)
 		: serverHandler(*this), redirector(redir) {
-	LOG(INFO) << "Created request handler";
 }
 
 void RequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) noexcept {
@@ -18,7 +16,6 @@ void RequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) n
 
 	folly::SocketAddress addr;
 	std::string redirectionURL = redirector.GetNextRedirectURL();
-	LOG(INFO) << "Redirecting to " << redirectionURL;
 
 	proxygen::ResponseBuilder(downstream_)
 			.status(302, "Balanced")
