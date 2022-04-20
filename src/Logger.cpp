@@ -23,4 +23,3 @@ spdlog::logger& LoggerContainer::Get() {
 	static spdlog::logger logger = SetUpLogging();
 	return logger;
 }
-
