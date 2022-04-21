@@ -1,5 +1,4 @@
 #include "Server/RequestHanlerFactory.h"
-#include "Server/Params.h"
 #include <proxygen/lib/http/HTTPConstants.h>
 #include <proxygen/lib/utils/URL.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
@@ -33,8 +32,12 @@ void BalancerRequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> he
 	request = std::move(headers);
 	proxygen::URL url(request->getURL());
 	folly::SocketAddress addr;
-	std::string redirectionURL = redirector.GetNextRedirectURL();
+	std::string redirectionURL = redirector.getNextRedirectURL();
 	logger.info(redirectionURL);
+	logger.info("Method String: " + request->getMethodString());
+	logger.info("Path: " + request->getPath());
+	logger.info("Query String: " + request->getQueryString());
+	logger.info("Dst Port: " + request->getDstPort());
 	auto head = request->getHeaders();
 	head.forEach([&] (const std::string& header, const std::string& val) {
 		logger.debug(redirectionURL + "| " + header + ": " + val);

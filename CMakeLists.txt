@@ -15,6 +15,7 @@ file(MAKE_DIRECTORY cmake-build-debug)
 find_package(proxygen REQUIRED)
 find_package(gflags REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(GTest REQUIRED)
 
 include_directories(include)
 add_subdirectory(src)
@@ -37,3 +38,11 @@ target_link_libraries(balancer_ex
         proxygen::proxygenhttpserver
         spdlog::spdlog
 )
+
+enable_testing()
+AUX_SOURCE_DIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/tests TEST_SOURCES)
+add_executable(
+        BalancerTests
+        ${TEST_SOURCES}
+)
+target_link_libraries(BalancerTests gtest gtest_main pthread)
