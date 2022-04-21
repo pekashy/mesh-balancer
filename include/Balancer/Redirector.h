@@ -5,6 +5,9 @@
 #include <vector>
 #include <chrono>
 #include <list>
+#include <queue>
+#include <functional>
+#include <memory>
 
 using RequestID = std::string;
 
@@ -27,18 +30,28 @@ struct hash<Endpoint> {
 }
 
 namespace balancer {
+using queueType = std::priority_queue<std::string, std::vector<std::string>,
+    std::function<bool(const std::string&, const std::string&)>>;
+
+
 class Redirector {
  public:
+	Redirector();
 	std::string getNextRedirectURL();
-	void registerEvent(const RequestID& requestID);
+	std::string assignRequest(const RequestID& requestID, const std::string& path);
 	void finishRequest(const RequestID& requestID);
  private:
+	void registerRequestToPathOnHost(const RequestID& requestID, const std::string& path, const std::string& host);
+
 	std::unordered_map<Endpoint, int> totalActive;  // total active requests for endpoints
 	std::unordered_map<RequestID, std::chrono::steady_clock::time_point> requestTimers;  // timers for active requests
-	std::unordered_map<Endpoint, std::list<double>> requestsTimes;  // last requests times history to calculate mean time
-	std::unordered_map<Endpoint, double> meanTimesForEndpoints;
-	std::unordered_map<std::string, double> hostsETAs;  // Sum_reqType(meanTime(requestType)*reqNumber(requestType))
-	int activeRequestsWindow = 100;
+	std::unordered_map<Endpoint, std::deque<long>> requestsTimes;  // last requests times history to calculate mean time
+	std::unordered_map<Endpoint, long> meanTimesForEndpoints;
+	std::unordered_map<std::string, long> hostsETAs;  // Sum_reqType(meanTime(requestType)*reqNumber(requestType))
+	std::unordered_map<std::string, Endpoint> requestData;
+	int lastRequestsMeanWindow;
+
+	std::unique_ptr<queueType> hostsQueue;
 
 	std::vector<std::string> locations = {
 			{"http://0.0.0.0:30001/bench"},

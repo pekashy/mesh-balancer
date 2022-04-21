@@ -45,4 +45,4 @@ add_executable(
         BalancerTests
         ${TEST_SOURCES}
 )
-target_link_libraries(BalancerTests gtest gtest_main pthread)
+target_link_libraries(BalancerTests gtest gtest_main pthread BalancerLogic)
