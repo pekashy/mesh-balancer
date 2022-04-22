@@ -2,22 +2,21 @@
 #include <proxygen/lib/http/session/HTTPTransaction.h>
 #include <proxygen/httpserver/RequestHandler.h>
 
-
 namespace server {
 class TransactionHandler : public proxygen::HTTPTransactionHandler {
  public:
 	explicit TransactionHandler(proxygen::RequestHandler& parent);
-	void setTransaction(proxygen::HTTPTransaction *txn) noexcept override;
+	void setTransaction(proxygen::HTTPTransaction* txn) noexcept override;
 	void detachTransaction() noexcept override;
 	void onHeadersComplete(std::unique_ptr<proxygen::HTTPMessage> msg) noexcept override;
 	void onBody(std::unique_ptr<folly::IOBuf> chain) noexcept override;
 	void onTrailers(std::unique_ptr<proxygen::HTTPHeaders> trailers) noexcept override;
 	void onEOM() noexcept override;
 	void onUpgrade(proxygen::UpgradeProtocol protocol) noexcept override;
-	void onError(const proxygen::HTTPException &error) noexcept override;
+	void onError(const proxygen::HTTPException& error) noexcept override;
 	void onEgressPaused() noexcept override;
 	void onEgressResumed() noexcept override;
  private:
-	proxygen::RequestHandler &parent;
+	proxygen::RequestHandler& parent;
 };
 }

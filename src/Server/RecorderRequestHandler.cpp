@@ -9,7 +9,7 @@ namespace server {
 class RecorderRequestHandler
 		: public proxygen::RequestHandler {
  public:
-	explicit RecorderRequestHandler(folly::HHWheelTimer *timer, balancer::Redirector &redir);
+	explicit RecorderRequestHandler(folly::HHWheelTimer* timer, balancer::Redirector& redir);
 	void onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) noexcept override;
 	void onBody(std::unique_ptr<folly::IOBuf> body) noexcept override;
 	void onUpgrade(proxygen::UpgradeProtocol prot) noexcept override;
@@ -20,10 +20,10 @@ class RecorderRequestHandler
 	spdlog::logger& logger;
 	TransactionHandler serverHandler;
 	std::unique_ptr<proxygen::HTTPMessage> request;
-	balancer::Redirector &redirector;
+	balancer::Redirector& redirector;
 };
 
-RecorderRequestHandler::RecorderRequestHandler(folly::HHWheelTimer *timer, balancer::Redirector &redir)
+RecorderRequestHandler::RecorderRequestHandler(folly::HHWheelTimer* timer, balancer::Redirector& redir)
 		: serverHandler(*this), redirector(redir), logger(LoggerContainer::Get()) {
 }
 
@@ -32,7 +32,7 @@ void RecorderRequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> he
 	proxygen::URL url(request->getURL());
 	logger.info("Recorded: " + request->getURL());
 	auto head = request->getHeaders();
-	head.forEach([&] (const std::string& header, const std::string& val) {
+	head.forEach([&](const std::string& header, const std::string& val) {
 		logger.debug(request->getURL() + "| " + header + ": " + val);
 	});
 	proxygen::ResponseBuilder(downstream_)
@@ -59,9 +59,8 @@ void RecorderRequestHandler::onError(proxygen::ProxygenError err) noexcept {
 
 }
 
-
-proxygen::RequestHandler* RequestHandlerFactory::createRecorderRequestHandler(proxygen::RequestHandler *handler,
-																											 proxygen::HTTPMessage *message) noexcept {
+proxygen::RequestHandler* RequestHandlerFactory::createRecorderRequestHandler(proxygen::RequestHandler* handler,
+																																							proxygen::HTTPMessage* message) noexcept {
 	return new RecorderRequestHandler(timer->timer.get(), redirector);
 }
 

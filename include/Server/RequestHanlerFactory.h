@@ -6,25 +6,24 @@
 #include <Balancer/Redirector.h>
 #include <spdlog/logger.h>
 
-
 namespace server {
 class RequestHandlerFactory : public proxygen::RequestHandlerFactory {
  public:
-	RequestHandlerFactory(balancer::Redirector &redirector);
-	void onServerStart(folly::EventBase *evb) noexcept override;
+	RequestHandlerFactory(balancer::Redirector& redirector);
+	void onServerStart(folly::EventBase* evb) noexcept override;
 	void onServerStop() noexcept override;
-	proxygen::RequestHandler *onRequest(proxygen::RequestHandler *handler,
-																			proxygen::HTTPMessage *message) noexcept override;
+	proxygen::RequestHandler* onRequest(proxygen::RequestHandler* handler,
+																			proxygen::HTTPMessage* message) noexcept override;
  private:
-	proxygen::RequestHandler* createRecorderRequestHandler(proxygen::RequestHandler *handler,
-																												 proxygen::HTTPMessage *message) noexcept;
-	proxygen::RequestHandler* createBalancerRequestHandler(proxygen::RequestHandler *handler,
-																												 proxygen::HTTPMessage *message) noexcept;
+	proxygen::RequestHandler* createRecorderRequestHandler(proxygen::RequestHandler* handler,
+																												 proxygen::HTTPMessage* message) noexcept;
+	proxygen::RequestHandler* createBalancerRequestHandler(proxygen::RequestHandler* handler,
+																												 proxygen::HTTPMessage* message) noexcept;
 	struct TimerWrapper {
 		folly::HHWheelTimer::UniquePtr timer;
 	};
 	folly::ThreadLocal<TimerWrapper> timer;
-	balancer::Redirector &redirector;
+	balancer::Redirector& redirector;
 };
 
 }

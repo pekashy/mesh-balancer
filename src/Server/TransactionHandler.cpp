@@ -2,10 +2,11 @@
 
 namespace server {
 
-TransactionHandler::TransactionHandler(proxygen::RequestHandler &parent) : parent(parent) {
+TransactionHandler::TransactionHandler(proxygen::RequestHandler& parent)
+		: parent(parent) {
 }
 
-void TransactionHandler::setTransaction(proxygen::HTTPTransaction *txn) noexcept {
+void TransactionHandler::setTransaction(proxygen::HTTPTransaction* txn) noexcept {
 
 }
 
@@ -33,7 +34,7 @@ void TransactionHandler::onUpgrade(proxygen::UpgradeProtocol protocol) noexcept 
 
 }
 
-void TransactionHandler::onError(const proxygen::HTTPException &error) noexcept {
+void TransactionHandler::onError(const proxygen::HTTPException& error) noexcept {
 
 }
 

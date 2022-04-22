@@ -31,19 +31,18 @@ struct hash<Endpoint> {
 
 namespace balancer {
 using queueType = std::priority_queue<std::string, std::vector<std::string>,
-    std::function<bool(const std::string&, const std::string&)>>;
-
+																			std::function<bool(const std::string&, const std::string&)>>;
 
 class Redirector {
  public:
-	Redirector();
-	std::string getNextRedirectURL();
+	explicit Redirector(const std::unordered_map<std::string, long>& initialETAsForHosts,
+											const std::vector<std::string>& hosts);
+	std::string getNextRedirectURL(const RequestID& requestID, const std::string& path);
 	std::string assignRequest(const RequestID& requestID, const std::string& path);
 	void finishRequest(const RequestID& requestID);
- private:
+ protected:
 	void registerRequestToPathOnHost(const RequestID& requestID, const std::string& path, const std::string& host);
 
-	std::unordered_map<Endpoint, int> totalActive;  // total active requests for endpoints
 	std::unordered_map<RequestID, std::chrono::steady_clock::time_point> requestTimers;  // timers for active requests
 	std::unordered_map<Endpoint, std::deque<long>> requestsTimes;  // last requests times history to calculate mean time
 	std::unordered_map<Endpoint, long> meanTimesForEndpoints;
@@ -52,13 +51,5 @@ class Redirector {
 	int lastRequestsMeanWindow;
 
 	std::unique_ptr<queueType> hostsQueue;
-
-	std::vector<std::string> locations = {
-			{"http://0.0.0.0:30001/bench"},
-			{"http://0.0.0.0:30002/bench"},
-			{"http://0.0.0.0:30003/bench"},
-			{"http://0.0.0.0:30004/bench"},
-	};
-	int nextPointer;
 };
 }
