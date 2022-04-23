@@ -8,12 +8,15 @@
 #include <queue>
 #include <functional>
 #include <memory>
-
-using RequestID = std::string;
+#include <spdlog/logger.h>
 
 struct Endpoint {
 	std::string host;
 	std::string path;
+
+	std::string to_string() const {
+		return host + path;
+	}
 
 	bool operator==(const Endpoint& e) const {
 		return host == e.host && path == e.path;
@@ -35,17 +38,20 @@ using queueType = std::priority_queue<std::string, std::vector<std::string>,
 
 class Redirector {
  public:
-	explicit Redirector(const std::unordered_map<std::string, long>& initialETAsForHosts,
-											const std::vector<std::string>& hosts);
-	std::string getNextRedirectURL(const RequestID& requestID, const std::string& path);
-	std::string assignRequest(const RequestID& requestID, const std::string& path);
-	void finishRequest(const RequestID& requestID);
+	Redirector(const std::unordered_map<std::string, long>& initialETAsForHosts,
+											const std::vector<std::string>& hosts,
+											int lastRequestsWindow);
+	std::string getNextRedirectURL(const std::string& requestID, const std::string& path);
+	void finishRequest(const std::string& requestID);
  protected:
-	void registerRequestToPathOnHost(const RequestID& requestID, const std::string& path, const std::string& host);
+	void registerRequestToPathOnHost(const std::string& requestID, const std::string& path, const std::string& host);
+	std::string assignRequest(const std::string& requestID, const std::string& path);
 
-	std::unordered_map<RequestID, std::chrono::steady_clock::time_point> requestTimers;  // timers for active requests
+	spdlog::logger& logger;
+	std::unordered_map<std::string, std::chrono::steady_clock::time_point> requestTimers;  // timers for active requests
 	std::unordered_map<Endpoint, std::deque<long>> requestsTimes;  // last requests times history to calculate mean time
 	std::unordered_map<Endpoint, long> meanTimesForEndpoints;
+	std::unordered_map<std::string, long> recordedETAsForRequests;
 	std::unordered_map<std::string, long> hostsETAs;  // Sum_reqType(meanTime(requestType)*reqNumber(requestType))
 	std::unordered_map<std::string, Endpoint> requestData;
 	int lastRequestsMeanWindow;

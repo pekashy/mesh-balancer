@@ -1,6 +1,5 @@
 #include "Server/RequestHanlerFactory.h"
 #include <proxygen/lib/http/HTTPConstants.h>
-#include <proxygen/lib/utils/URL.h>
 #include <proxygen/httpserver/ResponseBuilder.h>
 #include <Logger.h>
 #include <memory>
@@ -17,6 +16,8 @@ class BalancerRequestHandler
 	void requestComplete() noexcept override;
 	void onError(proxygen::ProxygenError err) noexcept override;
  private:
+	void logRequest(const std::string& redirectionURL, const std::string& requestID) const;
+
 	spdlog::logger& logger;
 	TransactionHandler serverHandler;
 	std::unique_ptr<proxygen::HTTPMessage> request;
@@ -27,20 +28,31 @@ BalancerRequestHandler::BalancerRequestHandler(folly::HHWheelTimer* timer, balan
 		: serverHandler(*this), redirector(redir), logger(LoggerContainer::Get()) {
 }
 
-void BalancerRequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) noexcept {
-	request = std::move(headers);
-	proxygen::URL url(request->getURL());
-	folly::SocketAddress addr;
-	std::string redirectionURL = redirector.getNextRedirectURL(request->getDstIP(), request->getPath());
-	logger.info(redirectionURL);
-	logger.info("Method String: " + request->getMethodString());
-	logger.info("Path: " + request->getPath());
-	logger.info("Query String: " + request->getQueryString());
-	logger.info("Dst Port: " + request->getDstPort());
+void BalancerRequestHandler::logRequest(const std::string& redirectionURL, const std::string& requestID) const {
+	logger.debug(redirectionURL);
+	logger.debug("Method String: " + request->getMethodString());
+	logger.debug("Path: " + request->getPath());
+	logger.debug("Query String: " + request->getQueryString());
+	logger.debug("Dst Port: " + request->getDstPort());
 	auto head = request->getHeaders();
 	head.forEach([&](const std::string& header, const std::string& val) {
 		logger.debug(redirectionURL + "| " + header + ": " + val);
 	});
+}
+
+void BalancerRequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> headers) noexcept {
+	request = std::move(headers);
+	auto requestID = request->getHeaders().getSingleOrEmpty<std::string>("x-request-id");
+
+	if (requestID.empty()) {
+		proxygen::ResponseBuilder(downstream_)
+				.status(400, "Request ID not found")
+				.sendWithEOM();
+		return;
+	}
+	std::string redirectionURL = redirector.getNextRedirectURL(requestID, request->getPath());
+	logRequest(redirectionURL, requestID);
+
 	proxygen::ResponseBuilder(downstream_)
 			.status(302, "Balanced")
 			.header<std::string>("Location", redirectionURL)

@@ -45,4 +45,11 @@ add_executable(
         BalancerTests
         ${TEST_SOURCES}
 )
-target_link_libraries(BalancerTests gtest gtest_main pthread BalancerLogic)
+add_dependencies(BalancerTests Common)
+target_link_libraries(BalancerTests gtest gtest_main pthread Server
+        BalancerLogic
+        Common
+        proxygen::proxygen
+        proxygen::proxygenhttpserver
+        spdlog::spdlog
+        )
