@@ -51,7 +51,8 @@ void Redirector::registerRequestToPathOnHost(const std::string& requestID,
 
 void Redirector::finishRequest(const std::string& requestID) {
 	auto duration =
-			(std::chrono::steady_clock::now() - requestTimers[requestID]).count(); // count current request duration
+			std::chrono::duration_cast<std::chrono::microseconds>((std::chrono::steady_clock::now()
+					- requestTimers[requestID])).count(); // count current request duration
 	logger.debug("Finishing request `" + requestID + "` with duration " + std::to_string(duration));
 	auto endpoint = requestData[requestID]; // get request context
 	long meanDuration = meanTimesForEndpoints[endpoint]; // get current mean duration for last requests
@@ -83,7 +84,7 @@ void Redirector::finishRequest(const std::string& requestID) {
 	long recordedETA = recordedETAsForRequests[requestID];
 	recordedETAsForRequests.erase(requestID);
 	logger.trace("Last mean duration is " + std::to_string(recordedETA));
-	hostsETAs[endpoint.host] = std::max(hostsETAs[endpoint.host] - recordedETA, (long) 0);
+	hostsETAs[endpoint.host] = std::max(hostsETAs[endpoint.host] - recordedETA, (long)0);
 	logger.debug("Updated ETA for host `" + endpoint.host + "` is " + std::to_string(hostsETAs[endpoint.host]));
 
 	auto host = hostsQueue->top(); // update the hosts queue
