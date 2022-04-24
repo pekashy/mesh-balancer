@@ -9,13 +9,13 @@
 
 spdlog::logger SetUpLogging() {
 	auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-	console_sink->set_level(spdlog::level::trace);
+	console_sink->set_level(spdlog::level::err);
 	auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(
 			"log/balance.log", true);
-	file_sink->set_level(spdlog::level::trace);
+	file_sink->set_level(spdlog::level::err);
 	spdlog::logger logger("balancer", {console_sink, file_sink});
-	logger.set_level(spdlog::level::trace);
-	logger.flush_on(spdlog::level::trace);
+	logger.set_level(spdlog::level::err);
+	logger.flush_on(spdlog::level::err);
 	return logger;
 }
 

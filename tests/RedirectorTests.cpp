@@ -5,18 +5,18 @@ using namespace balancer;
 
 class RedirectorStub : public Redirector {
  public:
-	RedirectorStub(const std::unordered_map<std::string, long>& initialETAsForHosts,
+	RedirectorStub(const std::unordered_map<std::string, long long int>& initialETAsForHosts,
 								 const std::vector<std::string>& hosts,
 								 int lastRequestsWindow)
 			: Redirector(initialETAsForHosts, hosts, lastRequestsWindow) {
 	}
-	void setMeanTimesForEndpoints(const std::unordered_map<Endpoint, long>& endps) {
+	void setMeanTimesForEndpoints(const std::unordered_map<Endpoint, long long int>& endps) {
 		for (auto& endp_meantime_pair: endps) {
 			meanTimesForEndpoints.insert(endp_meantime_pair);
 		}
 	}
 
-	void assertETA(const std::string& host, long targetETA) {
+	void assertETA(const std::string& host, long long int targetETA) {
 		ASSERT_EQ(hostsETAs[host], targetETA);
 	}
 };
@@ -47,7 +47,7 @@ TEST_F(RedirectorTests, TestGetHostWithMinETASecondReuestOtherHost) {
 														{"host1", "host2", "host3", "host4"}, 10);
 
 	Endpoint e{"host2", path};
-	std::unordered_map<Endpoint, long> endpointMeanTimes{{e, 100}};
+	std::unordered_map<Endpoint, long long int> endpointMeanTimes{{e, 100}};
 	redirector.setMeanTimesForEndpoints(endpointMeanTimes);
 	auto url1 = redirector.getNextRedirectURL(requestID1, path);
 	auto url2 = redirector.getNextRedirectURL(requestID2, path);
@@ -65,7 +65,7 @@ TEST_F(RedirectorTests, TestGetHostWithMinETASecondReuestSameHost) {
 														{"host1", "host2", "host3", "host4"}, 10);
 
 	Endpoint e{"host2", path};
-	std::unordered_map<Endpoint, long> endpointMeanTimes{{e, 1}};
+	std::unordered_map<Endpoint, long long int> endpointMeanTimes{{e, 1}};
 	redirector.setMeanTimesForEndpoints(endpointMeanTimes);
 	auto url1 = redirector.getNextRedirectURL(requestID1, path);
 	auto url2 = redirector.getNextRedirectURL(requestID2, path);
@@ -83,7 +83,7 @@ TEST_F(RedirectorTests, TestFinishRequest) {
 														{"host1", "host2", "host3", "host4"}, 10);
 
 	Endpoint e{"host2", path};
-	std::unordered_map<Endpoint, long> endpointMeanTimes{{e, 1000}};
+	std::unordered_map<Endpoint, long long int> endpointMeanTimes{{e, 1000}};
 	redirector.setMeanTimesForEndpoints(endpointMeanTimes);
 	auto url1 = redirector.getNextRedirectURL(requestID1, path);
 	redirector.finishRequest(requestID1);
@@ -104,7 +104,7 @@ TEST_F(RedirectorTests, TestFinish4RequestsConsequentlyAllAssignedToTheLeastLoad
 														{"host1", "host2", "host3", "host4"}, 100);
 
 	Endpoint e2{"host2", path};
-	std::unordered_map<Endpoint, long> endpointMeanTimes{{e2, 1000}};
+	std::unordered_map<Endpoint, long long int> endpointMeanTimes{{e2, 1000}};
 	redirector.setMeanTimesForEndpoints(endpointMeanTimes);
 	auto url1 = redirector.getNextRedirectURL(requestID1, path);
 	usleep(1000);
@@ -144,7 +144,7 @@ TEST_F(RedirectorTests, TestFinish4RequestsInParallel) {
 	Endpoint e3{"host3", path};
 	Endpoint e4{"host4", path};
 
-	std::unordered_map<Endpoint, long> endpointMeanTimes{{e1, 1000}, {e2, 1000}, {e3, 1000}, {e4, 1000}};
+	std::unordered_map<Endpoint, long long int> endpointMeanTimes{{e1, 1000}, {e2, 1000}, {e3, 1000}, {e4, 1000}};
 	redirector.setMeanTimesForEndpoints(endpointMeanTimes);
 	auto url1 = redirector.getNextRedirectURL(requestID1, path);
 	usleep(1000);
@@ -178,7 +178,7 @@ TEST_F(RedirectorTests, TestPopOutLastRequest) {
 														{"host1"}, 1);
 
 	Endpoint e{"host1", path};
-	std::unordered_map<Endpoint, long> endpointMeanTimes{{e, 0}};
+	std::unordered_map<Endpoint, long long int> endpointMeanTimes{{e, 0}};
 	redirector.setMeanTimesForEndpoints(endpointMeanTimes);
 	auto url1 = redirector.getNextRedirectURL(requestID1, path);
 	redirector.finishRequest(requestID1);

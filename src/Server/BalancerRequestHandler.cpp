@@ -55,7 +55,7 @@ void BalancerRequestHandler::onRequest(std::unique_ptr<proxygen::HTTPMessage> he
 
 	proxygen::ResponseBuilder(downstream_)
 			.status(302, "Balanced")
-			.header<std::string>("Location", redirectionURL)
+			.header<std::string>("location", redirectionURL)
 			.sendWithEOM();
 }
 void BalancerRequestHandler::onBody(std::unique_ptr<folly::IOBuf> body) noexcept {

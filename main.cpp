@@ -24,9 +24,10 @@ int main(int argc, char* argv[]) {
 			{SocketAddress(SERVER_IP, HTTP_PORT_REDIRECT, true), HTTPServer::Protocol::HTTP}, {
 					SocketAddress(SERVER_IP, HTTP_PORT_RECORD, true), HTTPServer::Protocol::HTTP},};
 	balancer::Redirector redirector
-			({{"http://0.0.0.0:30001", 0}, {"http://0.0.0.0:30002", 0}, {"http://0.0.0.0:30003", 0}, {"http://0.0.0.0:30004"
-																																																, 0}},
-			 {{"http://0.0.0.0:30001"}, {"http://0.0.0.0:30002"}, {"http://0.0.0.0:30003"}, {"http://0.0.0.0:30004"}},
+			({{"http://backend-1:8000", 0}, {"http://backend-2:8000", 0}, {"http://backend-3:8000", 0}, {
+					 "http://backend-4:8000"
+					 , 0}},
+			 {{"http://backend-1:8000"}, {"http://backend-2:8000"}, {"http://backend-3:8000"}, {"http://backend-4:8000"}},
 			 100);
 	auto options = CreateServerOptions(redirector);
 	HTTPServer server(std::move(options));
