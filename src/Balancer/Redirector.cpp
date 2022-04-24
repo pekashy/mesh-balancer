@@ -52,7 +52,7 @@ void Redirector::registerRequestToPathOnHost(const std::string& requestID,
 void Redirector::finishRequest(const std::string& requestID) {
 	std::lock_guard<std::mutex> lock(statsMutex);
 	long long int duration =
-			std::chrono::duration_cast<std::chrono::microseconds>((std::chrono::steady_clock::now()
+			std::chrono::duration_cast<std::chrono::milliseconds>((std::chrono::steady_clock::now()
 					- requestTimers[requestID])).count(); // count current request duration
 	logger.debug("Finishing request `" + requestID + "` with duration " + std::to_string(duration));
 	auto endpoint = requestData[requestID]; // get request context
