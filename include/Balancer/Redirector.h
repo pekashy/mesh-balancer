@@ -39,8 +39,8 @@ using queueType = std::priority_queue<std::string, std::vector<std::string>,
 class Redirector {
  public:
 	Redirector(const std::unordered_map<std::string, long long int>& initialETAsForHosts,
-											const std::vector<std::string>& hosts,
-											int lastRequestsWindow);
+						 const std::vector<std::string>& hosts,
+						 int lastRequestsWindow);
 	std::string getNextRedirectURL(const std::string& requestID, const std::string& path);
 	void finishRequest(const std::string& requestID);
  protected:
@@ -49,10 +49,12 @@ class Redirector {
 
 	spdlog::logger& logger;
 	std::unordered_map<std::string, std::chrono::steady_clock::time_point> requestTimers;  // timers for active requests
-	std::unordered_map<Endpoint, std::deque<long long int>> requestsTimes;  // last requests times history to calculate mean time
+	std::unordered_map<Endpoint, std::deque<long long int>>
+			requestsTimes;  // last requests times history to calculate mean time
 	std::unordered_map<Endpoint, long long int> meanTimesForEndpoints;
 	std::unordered_map<std::string, long long int> proposedETAsForRequests;
-	std::unordered_map<std::string, long long int> hostsETAs;  // Sum_reqType(meanTime(requestType)*reqNumber(requestType))
+	std::unordered_map<std::string, long long int>
+			hostsETAs;  // Sum_reqType(meanTime(requestType)*reqNumber(requestType))
 	std::unordered_map<std::string, Endpoint> requestData;
 	int lastRequestsMeanWindow;
 

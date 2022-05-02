@@ -7,41 +7,41 @@
 Config::Config(const std::string& fileneame) {
 	YAML::Node config;
 	auto logger = LoggerContainer::Get();
-	try{
+	try {
 		config = YAML::LoadFile(fileneame);
-	} catch(YAML::BadFile &e){
+	} catch (YAML::BadFile& e) {
 		throw std::runtime_error("Failed to load config file");
 	}
-	if(!config["hosts"]) {
+	if (!config["hosts"]) {
 		throw std::runtime_error("No `hosts` specified!");
 	}
-	for(int i = 0; i < config["hosts"].size(); ++i) {
+	for (int i = 0; i < config["hosts"].size(); ++i) {
 		auto host = config["hosts"][i].as<std::string>();
 		logger.info("Found host in config: " + host);
 		hosts.push_back(host);
 		initialHostsETAs[host];
 	}
-	if(!config["window_size"]) {
+	if (!config["window_size"]) {
 		throw std::runtime_error("No `window_size` - number of requests to consider while congfiguring mean time specified!");
 	}
 	windowSize = config["window_size"].as<int>();
 	logger.info(config["window_size"].as<int>());
-	if(!config["ip"]) {
+	if (!config["ip"]) {
 		throw std::runtime_error("Failed to load value `ip`!");
 	}
 	ip = config["ip"].as<std::string>();
 	logger.info("Using ip: " + ip);
-	if(!config["port_record"]) {
+	if (!config["port_record"]) {
 		throw std::runtime_error("Failed to load value `port_record`!");
 	}
 	recorderPort = config["port_record"].as<int>();
 	logger.info("Port for recording: " + std::to_string(recorderPort));
-	if(!config["port_redirect"]) {
+	if (!config["port_redirect"]) {
 		throw std::runtime_error("Failed to load value `port_redirect`!");
 	}
 	redirectorPort = config["port_redirect"].as<int>();
 	logger.info("Port for redirection: " + std::to_string(redirectorPort));
-	if(!config["threads"]) {
+	if (!config["threads"]) {
 		throw std::runtime_error("Failed to load value `threads`!");
 	}
 	nThreads = config["threads"].as<int>();

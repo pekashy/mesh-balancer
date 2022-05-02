@@ -43,7 +43,7 @@ void Redirector::registerRequestToPathOnHost(const std::string& requestID,
 			std::to_string(std::chrono::duration_cast<std::chrono::microseconds>(
 					requestTimers[requestID].time_since_epoch()).count()));
 	logger.debug("Adding to ETA of host " + host + " " + std::to_string(meanTimesForEndpoints[endpoint]) + " (endpoint "
-									 + endpoint.to_string() + ")"+ " (" + requestID + ")");
+									 + endpoint.to_string() + ")" + " (" + requestID + ")");
 	hostsETAs[host] += meanTimesForEndpoints[endpoint]; // add request proposed time to host
 	proposedETAsForRequests[requestID] = meanTimesForEndpoints[endpoint];
 	hostsQueue->push(host); // return host back to queue
@@ -67,7 +67,7 @@ void Redirector::finishRequest(const std::string& requestID) {
 			durationsList.pop_back();
 		}
 		durationsList.push_front(duration);
-		meanDuration = (meanDuration*lastRequestsMeanWindow - lastRequestDuration + duration)/lastRequestsMeanWindow;
+		meanDuration = (meanDuration * lastRequestsMeanWindow - lastRequestDuration + duration) / lastRequestsMeanWindow;
 		meanDuration += duration;
 	} else {
 		durationsList.push_front(duration);
@@ -86,7 +86,9 @@ void Redirector::finishRequest(const std::string& requestID) {
 	logger.debug("Proposed ETA for request was " + std::to_string(proposedETA));
 	logger.debug("Substracting ETA " + std::to_string(proposedETA) + " (" + requestID + ")");
 	hostsETAs[endpoint.host] -= proposedETA;
-	logger.debug("Updated ETA for host `" + endpoint.host + "` is " + std::to_string(hostsETAs[endpoint.host])+ " (" + requestID + ")");
+	logger.debug(
+			"Updated ETA for host `" + endpoint.host + "` is " + std::to_string(hostsETAs[endpoint.host]) + " (" + requestID
+					+ ")");
 
 	auto host = hostsQueue->top(); // update the hosts queue
 	hostsQueue->pop();

@@ -37,7 +37,7 @@ target_link_libraries(balancer_ex
         proxygen::proxygen
         proxygen::proxygenhttpserver
         spdlog::spdlog
-)
+        )
 
 enable_testing()
 AUX_SOURCE_DIRECTORY(${CMAKE_CURRENT_SOURCE_DIR}/tests TEST_SOURCES)

@@ -24,12 +24,12 @@ int parseLoglevel(char* argp) {
 		if (pos < arg.size()) {
 			std::cerr << "Trailing characters after number: " << arg << '\n';
 		}
-		if(loglevel < 0 || loglevel > 5) {
+		if (loglevel < 0 || loglevel > 5) {
 			throw std::runtime_error("Invalid loglevel");
 		}
-	} catch (std::invalid_argument const &ex) {
+	} catch (std::invalid_argument const& ex) {
 		throw std::runtime_error("Invalid number");
-	} catch (std::out_of_range const &ex) {
+	} catch (std::out_of_range const& ex) {
 		throw std::runtime_error("Invalid loglevel");
 	}
 	return loglevel;
@@ -38,13 +38,13 @@ int parseLoglevel(char* argp) {
 int main(int argc, char* argv[]) {
 	using namespace proxygen;
 	using namespace folly;
-	if(argc < 3) {
+	if (argc < 3) {
 		return -1;
 	}
 	int loglevel = 3;
 	try {
 		loglevel = parseLoglevel(argv[2]);
-	} catch(std::runtime_error& err) {
+	} catch (std::runtime_error& err) {
 		std::cerr << err.what() << std::endl;
 		return -1;
 	}
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 	std::unique_ptr<Config> config;
 	try {
 		config = std::make_unique<Config>((std::string(argv[1])));
-	} catch(std::runtime_error &e) {
+	} catch (std::runtime_error& e) {
 		logger.error(e.what());
 		return 1;
 	}
