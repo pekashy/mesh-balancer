@@ -1,0 +1,7 @@
+hosts: ["http://backend-1:8000", "http://backend-2:8000", "http://backend-3:8000", "http://backend-4:8000"]
+window_size: 10
+ip: 0.0.0.0
+port_redirect: 11002
+port_record: 11003
+threads: 0
+

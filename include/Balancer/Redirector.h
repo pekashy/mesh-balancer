@@ -14,7 +14,7 @@ struct Endpoint {
 	std::string host;
 	std::string path;
 
-	std::string to_string() const {
+	[[nodiscard]] std::string to_string() const {
 		return host + path;
 	}
 

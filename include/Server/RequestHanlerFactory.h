@@ -5,11 +5,12 @@
 #include "TransactionHandler.h"
 #include <Balancer/Redirector.h>
 #include <spdlog/logger.h>
+#include <Config.h>
 
 namespace server {
 class RequestHandlerFactory : public proxygen::RequestHandlerFactory {
  public:
-	RequestHandlerFactory(balancer::Redirector& redirector);
+	RequestHandlerFactory(balancer::Redirector& redirector, const Config& config);
 	void onServerStart(folly::EventBase* evb) noexcept override;
 	void onServerStop() noexcept override;
 	proxygen::RequestHandler* onRequest(proxygen::RequestHandler* handler,
@@ -24,6 +25,7 @@ class RequestHandlerFactory : public proxygen::RequestHandlerFactory {
 	};
 	folly::ThreadLocal<TimerWrapper> timer;
 	balancer::Redirector& redirector;
+	Config config;
 };
 
 }

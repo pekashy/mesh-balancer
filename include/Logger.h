@@ -4,5 +4,5 @@
 
 class LoggerContainer {
  public:
-	static spdlog::logger& Get();
+	static spdlog::logger& Get(int loglevel = 3);
 };

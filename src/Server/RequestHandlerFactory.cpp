@@ -1,10 +1,9 @@
 #include "Server/RequestHanlerFactory.h"
-#include "Server/Params.h"
 #include <Logger.h>
 
 namespace server {
-RequestHandlerFactory::RequestHandlerFactory(balancer::Redirector& redir)
-		: redirector(redir) {
+RequestHandlerFactory::RequestHandlerFactory(balancer::Redirector& redir, const Config& config)
+		: redirector(redir), config(config) {
 }
 
 void RequestHandlerFactory::onServerStart(folly::EventBase* evb) noexcept {
@@ -19,7 +18,7 @@ proxygen::RequestHandler* RequestHandlerFactory::onRequest(proxygen::RequestHand
 																													 proxygen::HTTPMessage* message) noexcept {
 	LoggerContainer::Get().info(message->getDstPort());
 	auto dstPort = std::stoi(message->getDstPort());
-	if (dstPort == HTTP_PORT_RECORD) {
+	if (dstPort == config.recorderPort) {
 		return createRecorderRequestHandler(handler, message);
 	}
 	return createBalancerRequestHandler(handler, message);
