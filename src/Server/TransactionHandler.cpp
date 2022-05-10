@@ -3,7 +3,7 @@
 namespace server {
 
 TransactionHandler::TransactionHandler(proxygen::RequestHandler& parent)
-		: parent(parent) {
+    : parent(parent) {
 }
 
 void TransactionHandler::setTransaction(proxygen::HTTPTransaction* txn) noexcept {
